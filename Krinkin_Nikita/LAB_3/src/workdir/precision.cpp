@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
     
     FILE *out_file = fopen(argv[1], "w");
 
-    double a = 0.13453;
+    double a = 0.6432;
     double b = 1.4432341923;
 
     for (int i=1; i<7; i++) {

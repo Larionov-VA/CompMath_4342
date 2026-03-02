@@ -21,7 +21,7 @@ int main() {
     double eps;
     double delta;
 
-    double a = 0.13453;
+    double a = 0.6432;
     double b = 1.4432341923;
 
     for (int di=1; di<7; di++) {

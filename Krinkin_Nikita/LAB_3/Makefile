@@ -21,4 +21,4 @@ ${WORK_DIR}/input_errors.o: ${WORK_DIR}/input_errors.cpp ${MAT_DIR}
 help:
 	@echo "Available options:"
 	@echo "	make [all] -- calculate f(x) = 0 and show results"
-	@echo "	make input_errors -- show input data sensivity"
+	@echo "	make input_errors -- show input data sensitivity"
