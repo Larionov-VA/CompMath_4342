@@ -1,7 +1,9 @@
 #include <iostream>
-#include "methods.hpp"
+#include "../../methods.hpp"
 #include <math.h>
 #include <fstream>
+
+// Метод Бисекции
 
 double DELTA = 1E-16;
 
@@ -19,7 +21,7 @@ void study_operation_count(){
 
     if (out.is_open())
     {
-        for (int i = 0; i < 20; i++)
+        for (int i = 0; i < 10; i++)
         {
             int N = 0;
             double root = BISECT(0.0, 1.0, p, N);
@@ -44,7 +46,7 @@ void study_root_value(){
         for (int i = 0; i < 10; i++){
             int N = 0;
 
-            double root = BISECT(0.0, 1.0, 0.01, N);
+            double root = BISECT(0.0, 1.0, 1E-15, N);
 
             out << root << ' ' << N << ' ' << DELTA << std::endl;
 
