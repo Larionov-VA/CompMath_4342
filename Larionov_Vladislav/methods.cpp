@@ -11,12 +11,18 @@
 #endif
 
 #if !ROUND
-extern double F(double x) {
+double F(double x) {
     return std::pow(x, 3) - 3 * x - 2 * std::pow(M_El, -x);
 }
+double derivativeF(double x) {
+    return 2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3;
+}
 #else
-extern double F(double x) {
+double F(double x) {
     return Round(std::pow(x, 3) - 3 * x - 2 * std::pow(M_El, -x), DELTA);
+}
+double derivativeF(double x) {
+    return Round(2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3);
 }
 #endif
 
@@ -48,8 +54,15 @@ double BISECT(double Left, double Right, double Eps, int &N)
         /* вычисление середины отрезка
          */
         Y = F(X);
-        if (Y == 0.0)
-            return (X);
+        if (Y == 0.0) {
+            if (derivativeF(X)) {
+                return (X);
+            }
+            else {
+                puts("Производная не равна нулю\n");
+                exit(1);
+            }
+        }
         if (Y * FLeft < 0.0)
             Right = X;
         else
@@ -59,6 +72,10 @@ double BISECT(double Left, double Right, double Eps, int &N)
         }
         N++;
     };
+    if (!derivativeF(X)) {
+        puts("Производная не равна нулю\n");
+        exit(1);
+    }
     return (X);
 }
 
