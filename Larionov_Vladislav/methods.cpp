@@ -22,7 +22,7 @@ double F(double x) {
     return Round(std::pow(x, 3) - 3 * x - 2 * std::pow(M_El, -x), DELTA);
 }
 double derivativeF(double x) {
-    return Round(2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3);
+    return Round(2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3, DELTA);
 }
 #endif
 
