@@ -24,7 +24,7 @@
 #else
     int main() {
         int iterationsCount;
-        std::cout << HORDA(LEFT, RIGHT, EPSILON, iterationsCount) << "\t | " << iterationsCount << '\n';
+        std::cout << NEWTON(RIGHT, EPSILON, iterationsCount) << "\t | " << iterationsCount << '\n';
         return EXIT_SUCCESS;
     }
 #endif
