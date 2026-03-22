@@ -17,12 +17,28 @@ double F(double x) {
 double derivativeF(double x) {
     return 2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3;
 }
+double phi(double x) {
+    return pow(3*x + 2*exp(-x), 1.0/3.0);
+}
+double dphi(double x) {
+    double temp = 3*x + 2*exp(-x);
+    double denom = 3 * pow(temp, 2.0/3.0);
+    return (3 - 2*exp(-x)) / denom;
+}
 #else
 double F(double x) {
     return Round(std::pow(x, 3) - 3 * x - 2 * std::pow(M_El, -x), DELTA);
 }
 double derivativeF(double x) {
     return Round(2 * std::pow(M_El, -x) + 3 * std::pow(x, 2) - 3, DELTA);
+}
+double phi(double x) {
+    return Round(pow(3*x + 2*exp(-x), 1.0/3.0), DELTA);
+}
+double dphi(double x) {
+    double temp = 3*x + 2*exp(-x);
+    double denom = 3 * pow(temp, 2.0/3.0);
+    return Round((3 - 2*exp(-x)) / denom, DELTA);
 }
 #endif
 
@@ -99,14 +115,14 @@ double ITER(double X0, double Eps, int &N)
         puts("Неверное задание точности\n");
         exit(1);
     }
-    double X1 = F(X0);
-    double X2 = F(X1);
+    double X1 = phi(X0);
+    double X2 = phi(X1);
     N = 2;
     while ((X1 - X2) * (X1 - X2) > fabs((2 * X1 - X0 - X2) * Eps))
     {
         X0 = X1;
         X1 = X2;
-        X2 = F(X1);
+        X2 = phi(X1);
         N++;
     }
     return (X2);
