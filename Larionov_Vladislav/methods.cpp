@@ -115,7 +115,6 @@ double ITER(double X0, double Eps, int &N)
 #ifdef __NEWTON
 double NEWTON(double X, double Eps, int &N)
 {
-    extern double F1(double);
     double Y, Y1, DX;
     N = 0;
     do
@@ -123,7 +122,7 @@ double NEWTON(double X, double Eps, int &N)
         Y = F(X);
         if (Y == 0.0)
             return (X);
-        Y1 = F1(X);
+        Y1 = derivativeF(X);
         if (Y1 == 0.0)
         {
             puts("Производная обратилась в ноль\n");
