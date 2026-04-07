@@ -6,15 +6,19 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 #include <random>
 #include <type_traits>
 
 #define STANDART_MATRIX_SIZE 5
 #define MAXIMUM_ELEMENT_VALUE 10
+#ifndef EPSILON
+#define EPSILON 1e-7
+#endif
+#ifndef GILBERT
+#define GILBERT 0
+#endif
 
-/*
-
-*/
 template <class T>
 class squareMatrix {
 private:
@@ -40,7 +44,9 @@ public:
     void setElement(int rowIndex, int columnIndex, T value);
     std::string toStr() const;
     std::pair<int, int> getCoordOfMaxElement(int startPos) const;
+    int getRowOfMaxElement(int colomn, int startRow) const;
     T getRandomNumber();
+    T getGilbertRandom(int i, int j);
     void swapRows(int rowI, int rowJ);
     void swapCollumns(int colI, int colJ);
     T norm() const;
@@ -50,6 +56,7 @@ public:
     void multiplyRow(double long multiplier, int rowIndex, int startPos, int endPos);
     void multiplyRow(double long multiplier, int rowIndex, int startPos);
     void multiplyRow(double long multiplier, int rowIndex);
+    std::vector<T>& getRow(int index);
 };
 
 
@@ -58,11 +65,17 @@ squareMatrix<T>::squareMatrix(int matrixSide) : N(matrixSide){
     M.resize(N, std::vector<T>(N));
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < N; j++) {
-            M[i][j] = getRandomNumber();
+            if (GILBERT) {
+                M[i][j] = getGilbertRandom(i, j);
+            }
+            else {
+                M[i][j] = getRandomNumber();
+            }
+
         }
     }
-    this->symmetric = checkSymmetric();
-    this->singular = checkSingular();
+    this->symmetric = false;
+    this->singular = false;
 }
 
 
@@ -94,7 +107,7 @@ T squareMatrix<T>::norm() const {
     for (int j = 0; j < N; ++j) {
         T currentSum = 0;
         for (int i = 0; i < N; ++i) {
-            currentSum += std::abs(getElement(i, j));
+            currentSum += std::fabs(getElement(i, j));
         }
         if (currentSum > maxSum) {
             maxSum = currentSum;
@@ -106,9 +119,6 @@ T squareMatrix<T>::norm() const {
 
 template <class T>
 squareMatrix<T> squareMatrix<T>::multiply(const squareMatrix<T>& other) const {
-    if (N != other.getN()) {
-        throw std::runtime_error("Matrix sizes mismatch");
-    }
     squareMatrix<T> result(N);
     for (int i = 0; i < N; ++i) {
         for (int j = 0; j < N; ++j) {
@@ -125,9 +135,6 @@ squareMatrix<T> squareMatrix<T>::multiply(const squareMatrix<T>& other) const {
 
 template <class T>
 squareMatrix<T> squareMatrix<T>::inverse() const {
-    if (this->isSingular()) {
-        throw std::runtime_error("Matrix is singular");
-    }
     squareMatrix<T> A = *this;
     squareMatrix<T> I(N);
     for (int i = 0; i < N; ++i) {
@@ -137,9 +144,6 @@ squareMatrix<T> squareMatrix<T>::inverse() const {
     }
     for (int i = 0; i < N; ++i) {
         T pivot = A.getElement(i, i);
-        if (std::abs(pivot) < 1e-12) {
-            throw std::runtime_error("Matrix is singular");
-        }
         for (int j = 0; j < N; ++j) {
             A.setElement(i, j, A.getElement(i, j) / pivot);
             I.setElement(i, j, I.getElement(i, j) / pivot);
@@ -173,28 +177,20 @@ T squareMatrix<T>::conditionNumber() const {
 
 template <class T>
 const T& squareMatrix<T>::getElement(int rowIndex, int columnIndex) const {
-    if (rowIndex >= 0 & columnIndex >= 0 & rowIndex < N & columnIndex < N) {
-        return this->M[rowIndex][columnIndex];
-    }
-    throw std::out_of_range("Обращение к елементу с индексом (" +
-        std::to_string(rowIndex) +
-        ", " +
-        std::to_string(columnIndex) +
-        ")\n" );
+    return this->M[rowIndex][columnIndex];
 }
 
 
 template <class T>
 void squareMatrix<T>::setElement(int rowIndex, int columnIndex, T value) {
-    if (rowIndex >= 0 & columnIndex >= 0 & rowIndex < N & columnIndex < N) {
-        this->M[rowIndex][columnIndex] = value;
-        return;
-    }
-    throw std::out_of_range("Обращение к елементу с индексом (" +
-        std::to_string(rowIndex) +
-        ", " +
-        std::to_string(columnIndex) +
-        ")\n" );
+    this->M[rowIndex][columnIndex] = value;
+    return;
+}
+
+
+template <class T>
+T squareMatrix<T>::getGilbertRandom(int i, int j) {
+    return static_cast<T>(1.0/(i + j + 1));
 }
 
 
@@ -220,6 +216,7 @@ T squareMatrix<T>::getRandomNumber() {
 template <class T>
 std::string squareMatrix<T>::toStr() const {
     std::string strMatrix;
+    strMatrix.reserve(N * N * 15);
     for (const auto& row : M) {
         for (const auto&  element : row) {
             strMatrix += std::to_string(element);
@@ -257,7 +254,7 @@ bool squareMatrix<T>::isColumnsLinearlyDependent(int colI, int colJ) {
     for (int rowIndex = 0; rowIndex < this->N; ++rowIndex) {
         const T& currColIElement2 = getElement(rowIndex, colI);
         const T& currColJElement2 = getElement(rowIndex, colJ);
-        if (std::abs(currColJElement2 * coef - currColIElement2) > 1e-10) {
+        if (std::abs(currColJElement2 * coef - currColIElement2) > EPSILON) {
             return false;
         }
     }
@@ -267,6 +264,9 @@ bool squareMatrix<T>::isColumnsLinearlyDependent(int colI, int colJ) {
 
 template <class T>
 bool squareMatrix<T>::checkSingular() {
+    if (GILBERT) {
+        return false;
+    }
     for (int indexColumnI = 0; indexColumnI < this->N; ++indexColumnI) {
         for (int indexColumnJ = indexColumnI + 1; indexColumnJ < this->N; ++indexColumnJ) {
             if (isColumnsLinearlyDependent(indexColumnI, indexColumnJ)) {
@@ -298,7 +298,7 @@ std::pair<int, int> squareMatrix<T>::getCoordOfMaxElement(int startPos) const {
     for(int i = startPos; i < N; ++i) {
         for(int j = startPos; j < N; ++j) {
             const T& currentElement = M[i][j];
-            if (currentElement == 0) {
+            if (currentElement < EPSILON) {
                 continue;
             }
             if (std::fabs(currentElement) > maxElem) {
@@ -312,8 +312,26 @@ std::pair<int, int> squareMatrix<T>::getCoordOfMaxElement(int startPos) const {
 
 
 template <class T>
+int squareMatrix<T>::getRowOfMaxElement(int colomn, int startRow) const {
+    int targetRow = -1;
+    T maxElem = std::numeric_limits<T>::min();
+    for(int i = startRow; i < N; ++i) {
+        const T& currentElement = std::fabs(M[i][colomn]);
+        if (currentElement < EPSILON) {
+            continue;
+        }
+        if (currentElement > maxElem) {
+            targetRow = i;
+            maxElem = currentElement;
+        }
+    }
+    return targetRow;
+}
+
+
+template <class T>
 void squareMatrix<T>::swapRows(int rowI, int rowJ) {
-    if(rowI < N & rowJ < N & rowI >= 0 & rowJ >= 0) {
+    if(rowI < N && rowJ < N && rowI >= 0 && rowJ >= 0) {
         std::swap(M[rowI], M[rowJ]);
     }
 }
@@ -345,9 +363,14 @@ void squareMatrix<T>::multiplyRow(double long multiplier, int rowIndex) {
 
 template <class T>
 void squareMatrix<T>::swapCollumns(int colI, int colJ) {
-    if(colI < N & colJ < N & colI >= 0 & colJ >= 0) {
+    if(colI < N && colJ < N && colI >= 0 && colJ >= 0) {
         for (int i = 0; i < N; ++i) {
             std::swap(M[i][colI], M[i][colJ]);
         }
     }
+}
+
+template <class T>
+std::vector<T>& squareMatrix<T>::getRow(int index) {
+    return this->M[index];
 }
