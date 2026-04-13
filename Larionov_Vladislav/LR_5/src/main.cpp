@@ -194,7 +194,6 @@ int main() {
         return getData();
     case 2:
         return CompareGaussianAndLU();
-
     case 3:
         return TestGaussian();
     }
