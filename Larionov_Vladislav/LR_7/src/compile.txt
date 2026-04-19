@@ -1,0 +1,1 @@
+g++ main.cpp -o main rectangle.hpp Newton-Simpson.hpp trapezoid.hpp functions.hpp -O3 -Wall -Wextra && ./main
