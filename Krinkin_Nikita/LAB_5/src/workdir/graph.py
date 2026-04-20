@@ -38,7 +38,7 @@ if __name__ == "__main__":
                 data_x.append(float(x))
                 data_y.append(int(y))
 
-        plt.axvline(x=0.70711, color='red', linestyle='--', label='f\'(x) = 0 \nx = max(f\'(x))')
+        plt.axvline(x=0.70711, color='red', linestyle='--', label='f\'(x) = 0 \nf\'\'(x) = 0')
         plt.plot(data_x, data_y, "bo", label="Result")
         # plt.plot(data_x, data_y, "k--")
 
