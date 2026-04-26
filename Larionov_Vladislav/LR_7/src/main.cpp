@@ -2,6 +2,7 @@
 #include "./Newton-Simpson.hpp"
 #include "./rectangle.hpp"
 #include "./trapezoid.hpp"
+#include <iomanip>
 
 
 void printListOfFunctions() {
@@ -81,9 +82,9 @@ std::function<ld(ld)> getFunction(int functionChoice) {
         std::cin >> funcCoeff.a >> funcCoeff.b;
         break;
     default:
-        func = linear;
+        func = mod2;
         std::cout << "Выбрана функия по умолчанию:\n";
-        std::cout << "\tf(x) = x\n";
+        std::cout << "\tf(x) = mod(x - 1)\n";
         funcCoeff.a = 1;
         funcCoeff.b = 0;
         break;
@@ -135,34 +136,121 @@ int main() {
     printListOfMethods();
     int methodChoice;
     std::cin >> methodChoice;
+    ld runge_coeff;
+    if (methodChoice == SIMPSON) runge_coeff = 15.0L;
+    else if (methodChoice == TRAPEZOID) runge_coeff = 3.0L;
+    else if (methodChoice == RECTANGLE + rectangleType::CENTER) runge_coeff = 3.0L;
+    else runge_coeff = 1.0L;
     if (methodChoice) {
         auto method = getMethod(methodChoice);
-        int n, a, b;
+        long double n, a, b;
         std::cout << "Введите пределы интегрирования.\n";
         std::cin >> a >> b;
-        std::cout << "Введите количество отрезков.\n";
+        std::cout << "Введите необходимую точность.\n";
         std::cin >> n;
-        std::cout << method(function, a, b, n) << '\n';
+        std::string nS = std::to_string(n);
+        ld I_prev = 0.0L;
+        ld I_curr;
+        for (int i = 2; ; i += 2) {
+            I_curr = method(function, a, b, i);
+            if (std::abs(I_curr - I_prev)/runge_coeff < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) << I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 10000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
     }
     else {
-        int n, a, b;
+        long double n, a, b;
         std::cout << "Введите пределы интегрирования.\n";
         std::cin >> a >> b;
-        std::cout << "Введите количество отрезков.\n";
+        std::cout << "Введите необходимую точность.\n";
         std::cin >> n;
+        std::string nS = std::to_string(n);
         rectMethodType = rectangleType::LEFT;
         std::cout << "1. ";
-        std::cout << rectangle(function, a, b, n) << '\n';
+        ld I_prev = rectangle(function, a, b, 1);
+        ld I_curr;
+        for (int i = 2; ; i += 2) {
+            I_curr = rectangle(function, a, b, i);
+            if (std::abs(I_curr - I_prev) < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) <<  I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 100000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
         rectMethodType = rectangleType::RIGHT;
         std::cout << "2. ";
-        std::cout << rectangle(function, a, b, n) << '\n';
+        I_prev = rectangle(function, a, b, 1);
+        for (int i = 2; ; i += 2) {
+            I_curr = rectangle(function, a, b, i);
+            if (std::abs(I_curr - I_prev) < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) <<  I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 100000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
         rectMethodType = rectangleType::CENTER;
         std::cout << "3. ";
-        std::cout << rectangle(function, a, b, n) << '\n';
+        I_prev = rectangle(function, a, b, 1);
+        for (int i = 2; ; i += 2) {
+            I_curr = rectangle(function, a, b, i);
+            if (std::abs(I_curr - I_prev)/3.0 < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) <<  I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 100000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
         std::cout << "4. ";
-        std::cout << trapezoid(function, a, b, n) << '\n';
+        I_prev = trapezoid(function, a, b, 1);
+        for (int i = 2; ; i += 2) {
+            I_curr = trapezoid(function, a, b, i);
+            if (std::abs(I_curr - I_prev)/3.0 < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) <<  I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 100000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
         std::cout << "5. ";
-        std::cout << NewtonSimpson(function, a, b, n) << '\n';
+        I_prev = NewtonSimpson(function, a, b, 2);
+        for (int i = 4; ; i += 2) {
+            I_curr = NewtonSimpson(function, a, b, i);
+            if (std::abs(I_curr - I_prev)/15.0 < n) {
+                std::cout << "Количество отрезков: " << i << '\n';
+                std::cout << '\t' << std::fixed << std::setprecision(nS.length()) << I_curr << '\n';
+                break;
+            }
+            I_prev = I_curr;
+            if (i > 100000000) {
+                std::cerr << "Достигнут лимит разбиений\n";
+                break;
+            }
+        }
     }
     return EXIT_SUCCESS;
 }
