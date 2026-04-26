@@ -89,3 +89,8 @@ ld cg(ld x) {
         return funcCoeff.a + std::cos(arg) / std::sin(arg);
     }
 }
+
+
+ld mod2(ld x) {
+    return std::abs(x - 1);
+}
