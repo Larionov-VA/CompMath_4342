@@ -1,0 +1,16 @@
+ Тесты метода Гаусса с частичным выбором ведущего элемента
+[ OK ]  Unique 2x2 (x=1, y=3)                          0.005 ms  |  mem        120  |  rank   2  |  nonsing Y
+[ OK ]  Unique 3x3 (x=2, y=3, z=-1)                    0.002 ms  |  mem        204  |  rank   3  |  nonsing Y
+[ OK ]  NoSolution (противоречие)          0.002 ms  |  mem        120  |  rank   1  |  nonsing N
+[ OK ]  NoSolution 3x3 (строка 0≠c)            0.001 ms  |  mem        204  |  rank   1  |  nonsing N
+[ OK ]  Infinite 2x3 (rank=1)                          0.001 ms  |  mem        148  |  rank   1  |  nonsing N
+[ OK ]  Infinite 3x4 (rank=2)                          0.002 ms  |  mem        240  |  rank   2  |  nonsing N
+[ OK ]  Hilbert 5x5 (точность, cond~5e5)       0.003 ms  |  mem        420  |  rank   5  |  nonsing Y
+[ OK ]  Hilbert 8x8 (сильный cond~1.5e10)       0.011 ms  |  mem        864  |  rank   8  |  nonsing Y
+[ OK ]  Diagonal 1000x1000 (скорость)         12.905 ms  |  mem    8044000  |  rank 1000  |  nonsing Y
+[ OK ]  Zero matrix, b≠0 (NoSolution)                0.002 ms  |  mem        120  |  rank   0  |  nonsing N
+[ OK ]  Zero matrix, b=0  (Infinite)                   0.001 ms  |  mem        120  |  rank   0  |  nonsing N
+[ OK ]  Overdetermined 3x2, Unique (x=1,y=2)           0.001 ms  |  mem        168  |  rank   2  |  nonsing N
+
+Итого: 12 OK,  0 FAIL  (из 12 тестов)
+Сохранено в test_results.txt
