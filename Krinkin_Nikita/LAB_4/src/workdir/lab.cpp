@@ -32,8 +32,8 @@ int main() {
     cin >> it; if (it <= 0) it = 1;
     delta = pow(10, -it);
 
-    double a = 0.1;
-    double b = 1.5;
+    double a = 0.85;
+    double b = 1.15;
 
     int n = 0;
     x = HORDA(a, b, eps, n);

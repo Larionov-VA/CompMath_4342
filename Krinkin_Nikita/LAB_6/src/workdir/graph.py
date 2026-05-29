@@ -1,5 +1,5 @@
 import matplotlib
-matplotlib.use("TkAgg")
+# matplotlib.use("TkAgg")
 
 import os
 import sys
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         plt.plot(data_x, data_y, "bo", label="Result")
         plt.plot(data_x, data_y, "k--")
 
-        plt.plot(data_x, list(map(lambda x: 2 * x**(1/2), data_x)), "r--", label="Abstract f(x) = sqrt(x)")
+        plt.plot(data_x, list(map(lambda x: (1 / 2) * x + 2, data_x)), "r--", label="Abstract f(x) = kx")
         plt.title("Iterations ~ Precision")
         plt.xlabel("Precision, number of decimal places")
         plt.ylabel("Number of iterations")
