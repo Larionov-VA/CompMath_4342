@@ -29,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     FILE *out_file = fopen(argv[1], "w");
 
-    double x0 = 1.05;
+    double x0 = 0.95;
 
     for (int i=1; i<=12; i++) {
         eps = pow(10, -i);

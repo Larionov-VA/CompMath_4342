@@ -5,10 +5,10 @@ MAT_DIR = ${SRC_DIR}/Materials
 lab: ${WORK_DIR}/lab
 	${WORK_DIR}/lab
 
-precision: ${WORK_DIR}/precision.txt ${WORK_DIR}/graph.py
+precision: ${WORK_DIR}/precision.txt ${WORK_DIR}/graph.py ${WORK_DIR}/precision.cpp ${MAT_DIR}
 	python3 ${WORK_DIR}/graph.py ${WORK_DIR}/precision.txt precision
 
-input_errors: ${WORK_DIR}/input_errors.txt ${WORK_DIR}/graph.py
+input_errors: ${WORK_DIR}/input_errors.txt ${WORK_DIR}/graph.py ${WORK_DIR}/input_errors.cpp ${MAT_DIR}
 	python3 ${WORK_DIR}/graph.py ${WORK_DIR}/input_errors.txt input_errors
 
 ${WORK_DIR}/precision.txt: ${WORK_DIR}/precision.o
