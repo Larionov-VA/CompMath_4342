@@ -1,42 +1,61 @@
-from matplotlib import pyplot as plt
-
-def plot(x_data, y_data, x_label, y_label, name, file_name, is_log_xscale = False):
-    plt.plot(x_data, y_data)
-    plt.grid()
-    if is_log_xscale: 
-        plt.xscale('log')
-    plt.xlabel(x_label)
-    plt.ylabel(y_label)
-    plt.title(name)
-    plt.savefig(file_name)
-    plt.show()
+import matplotlib.pyplot as plt
+import sys
 
 def main():
-    eps_values = []
-    n_values = []
-    delta_values = []
-    x_values = []
+    if len(sys.argv) < 3:
+        print("Использование: plots.py <тип> <выходной_файл>")
+        print("тип: eps (итерации от точности) или delta (корень от погрешности)")
+        sys.exit(1)
 
-    print("Исследование зависимости числа операций от точности eps");
+    plot_type = sys.argv[1]
+    output = sys.argv[2]
 
-    numEps = int(input())
-    for _ in range(numEps):
-        eps, n, x = [float(el) for el in input().split()]
-        print(f"eps = {eps}, n = {n}, x = {x}")
-        eps_values.append(eps)
-        n_values.append(n)
+    params = []   
+    iters = []    
+    roots = []    
 
-    plot(eps_values, n_values, "Точность Eps", "Количество итераций", "Зависимость числа итераций от точности Eps", "eps_n.png", is_log_xscale=True)
+    for line in sys.stdin:
+        line = line.strip()
+        if not line:
+            continue
+        parts = line.split()
+        if len(parts) != 3:
+            continue
+        try:
+            p = float(parts[0])  
+            it = int(parts[1])     
+            r = float(parts[2])  
+        except ValueError:
+            continue
+        params.append(p)
+        iters.append(it)
+        roots.append(r)
 
-    print("\nИсследование чувствительности к ошибкам исходных данных")
-    numDelta = int(input())
-    for _ in range(numDelta):
-        delta, n, x = [float(el) for el in input().split()]
-        print(f"delta = {delta}, n = {n}, x = {x}")
-        delta_values.append(delta)
-        x_values.append(x)
+    if not params:
+        print("Нет данных для построения графика")
+        return
 
-    plot(delta_values, x_values, "Погрешность Delta", "Приближенный корень", "Зависимость вычисленного корня от погрешности Delta", "delta_x.png")
+    plt.figure(figsize=(8, 6))
 
-if __name__ == "__main__":
+    if plot_type == 'eps':
+        plt.plot(params, iters, 'o-')
+        plt.xscale('log')
+        plt.xlabel('eps')
+        plt.ylabel('iterations')
+    elif plot_type == 'delta':
+        plt.plot(params, roots, 'o-')
+        plt.xscale('log')
+        plt.xlabel('delta')
+        plt.ylabel('root')
+    else:
+        print("Неизвестный тип. Используйте eps или delta")
+        return
+
+    plt.grid(True)
+    plt.tight_layout()
+
+    plt.savefig(output, dpi=150)
+    plt.show()
+
+if __name__ == '__main__':
     main()
